@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#001b72">
+  <meta name="description" content="Links oficiais da TVC Travel">
+  <title>TVC Travel | HazeLink</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #001145;
+      color: #ffffff;
+      font-family: "Montserrat", system-ui, sans-serif;
+      letter-spacing: 0;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: pan-y;
+    }
+
+    body {
+      min-height: 100dvh;
+    }
+
+    button,
+    a {
+      font: inherit;
+    }
+
+    .shell {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 70% 18%, rgba(255, 238, 0, .22), transparent 17rem),
+        linear-gradient(160deg, #001145 0%, #001f86 54%, #00a8ea 100%);
+    }
+
+    .videoLayer {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      background: #001145;
+    }
+
+    .videoLayer video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(1.12) contrast(1.04) brightness(.94);
+    }
+
+    .videoLayer::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255, 238, 0, .32), transparent 14rem),
+        linear-gradient(to bottom, rgba(0, 13, 71, .1), rgba(0, 13, 71, .26) 46%, rgba(0, 9, 42, .7));
+      mix-blend-mode: multiply;
+    }
+
+    .videoLayer::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 3;
+      height: 40%;
+      pointer-events: none;
+      background: linear-gradient(to top, rgba(0, 7, 34, .78), transparent);
+    }
+
+    .brand {
+      position: fixed;
+      top: calc(18px + env(safe-area-inset-top, 0px));
+      left: 18px;
+      z-index: 8;
+      display: grid;
+      gap: 8px;
+      max-width: calc(100% - 92px);
+    }
+
+    .brandLogo {
+      width: clamp(94px, 28vw, 144px);
+      aspect-ratio: 1;
+      display: block;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow:
+        0 18px 38px rgba(0, 8, 42, .38),
+        0 0 0 3px rgba(255, 238, 0, .82),
+        0 0 0 7px rgba(0, 32, 140, .36);
+    }
+
+    .brandKicker {
+      width: fit-content;
+      max-width: 230px;
+      padding: 8px 11px;
+      border: 1px solid rgba(255, 238, 0, .34);
+      border-radius: 999px;
+      color: #ffef00;
+      background: rgba(0, 17, 69, .58);
+      backdrop-filter: blur(14px);
+      font-size: 10px;
+      font-weight: 900;
+      line-height: 1;
+      text-transform: uppercase;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, .28);
+      box-shadow: 0 12px 28px rgba(0, 8, 42, .28);
+    }
+
+    .soundButton {
+      position: fixed;
+      top: calc(20px + env(safe-area-inset-top, 0px));
+      right: 16px;
+      z-index: 12;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      background: rgba(0, 17, 69, .72);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 16px 30px rgba(0, 8, 42, .26);
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, color .18s ease;
+    }
+
+    .soundButton:active {
+      transform: scale(.94);
+    }
+
+    .soundButton.soundOn {
+      color: #001145;
+      background: #ffef00;
+    }
+
+    .swipeHint {
+      position: fixed;
+      left: 50%;
+      bottom: calc(34px + env(safe-area-inset-bottom, 0px));
+      z-index: 10;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      color: #ffffff;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-align: center;
+      cursor: pointer;
+      text-shadow: 0 2px 14px rgba(0, 7, 34, .68);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+
+    .swipeHint.hidden {
+      opacity: 0;
+      transform: translate(-50%, 12px);
+    }
+
+    .swipeCircle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #001145;
+      background: #ffef00;
+      box-shadow:
+        0 18px 34px rgba(0, 8, 42, .34),
+        inset 0 1px 0 rgba(255, 255, 255, .5);
+      animation: floatArrow 1.55s ease-in-out infinite;
+    }
+
+    @keyframes floatArrow {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .panel {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      max-height: min(92dvh, 760px);
+      overflow-y: auto;
+      color: #ffffff;
+      border-radius: 28px 28px 0 0;
+      border: 1px solid rgba(255, 255, 255, .14);
+      border-bottom: 0;
+      background:
+        radial-gradient(circle at 88% 0%, rgba(255, 238, 0, .36), transparent 12rem),
+        radial-gradient(circle at 0% 18%, rgba(0, 178, 235, .34), transparent 12rem),
+        linear-gradient(165deg, rgba(0, 31, 134, .98) 0%, rgba(0, 18, 78, .99) 56%, rgba(0, 8, 42, .99) 100%);
+      box-shadow: 0 -26px 78px rgba(0, 7, 34, .46);
+      transform: translateY(100%);
+      transition: transform .42s cubic-bezier(.4, 0, .2, 1);
+      will-change: transform;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      backdrop-filter: blur(20px);
+      scrollbar-width: none;
+    }
+
+    .panel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .panel.open {
+      transform: translateY(0);
+    }
+
+    .panel.noAnim {
+      transition: none;
+    }
+
+    .handle {
+      width: 44px;
+      height: 5px;
+      border-radius: 999px;
+      margin: 13px auto 0;
+      background: rgba(255, 255, 255, .28);
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .panelBody {
+      width: min(454px, 100%);
+      margin: 0 auto;
+      padding: 14px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+      display: grid;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .panelHero {
+      position: relative;
+      width: 100%;
+      display: grid;
+      justify-items: center;
+      padding: 0 0 14px;
+    }
+
+    .panelHero::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      width: min(320px, 86%);
+      height: 150px;
+      border-radius: 50%;
+      background:
+        radial-gradient(ellipse at center, rgba(255, 238, 0, .2), rgba(0, 178, 235, .12) 48%, transparent 76%);
+      filter: blur(12px);
+      pointer-events: none;
+    }
+
+    .panelLogo {
+      position: relative;
+      width: clamp(96px, 28vw, 132px);
+      aspect-ratio: 1;
+      margin-bottom: 10px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      box-shadow:
+        0 16px 30px rgba(0, 7, 34, .4),
+        0 0 0 4px rgba(255, 238, 0, .9),
+        0 0 0 9px rgba(255, 255, 255, .14);
+    }
+
+    .title {
+      position: relative;
+      max-width: 360px;
+      color: #ffffff;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(27px, 7vw, 36px);
+      line-height: 1.04;
+      font-weight: 800;
+      text-wrap: balance;
+      text-shadow: 0 3px 18px rgba(0, 7, 34, .62);
+    }
+
+    .tagline {
+      position: relative;
+      max-width: 350px;
+      margin-top: 9px;
+      color: rgba(255, 255, 255, .9);
+      font-size: 13px;
+      line-height: 1.48;
+      font-weight: 700;
+    }
+
+    .tagline strong {
+      color: #ffef00;
+      font-weight: 900;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      margin: 0 0 16px;
+      background: linear-gradient(90deg, transparent, rgba(255, 238, 0, .34), transparent);
+    }
+
+    .quickActions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .quickButton {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, .24);
+      background: rgba(255, 255, 255, .12);
+      text-decoration: none;
+      box-shadow: 0 12px 20px rgba(0, 7, 34, .22);
+      transition: transform .16s ease, filter .16s ease;
+    }
+
+    .quickButton.whatsapp {
+      background: #25d366;
+    }
+
+    .quickButton.instagram {
+      background:
+        radial-gradient(circle at 30% 105%, #fdf497 0 16%, #fd5949 42%, #d6249f 68%, #285aeb 100%);
+    }
+
+    .quickButton.site {
+      color: #001145;
+      background: #ffef00;
+    }
+
+    .quickButton:active {
+      transform: scale(.92);
+      filter: brightness(.94);
+    }
+
+    .actions {
+      width: 100%;
+      display: grid;
+      gap: 10px;
+    }
+
+    .actionButton {
+      position: relative;
+      min-height: 67px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 15px;
+      border-radius: 19px;
+      color: #ffffff;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, .2);
+      background: rgba(255, 255, 255, .1);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .18),
+        0 17px 30px rgba(0, 7, 34, .24);
+      transition: transform .18s ease, filter .18s ease, border-color .18s ease;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .actionButton::after {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: 18px;
+      background: linear-gradient(120deg, rgba(255, 255, 255, .18), transparent 40%, rgba(255, 255, 255, .08));
+      pointer-events: none;
+      opacity: .62;
+    }
+
+    .actionButton:active {
+      transform: scale(.97);
+      filter: brightness(.94);
+    }
+
+    .actionButton.siteMain {
+      color: #001145;
+      background:
+        radial-gradient(circle at 92% 10%, rgba(255, 255, 255, .72), transparent 7rem),
+        linear-gradient(135deg, #fffb4c 0%, #ffef00 52%, #f0bc00 100%);
+      border-color: rgba(255, 255, 255, .52);
+    }
+
+    .actionButton.whatsappMain {
+      background:
+        radial-gradient(circle at 92% 12%, rgba(255, 255, 255, .26), transparent 7rem),
+        linear-gradient(135deg, #35e77d 0%, #25d366 46%, #088a3d 100%);
+      border-color: rgba(214, 255, 229, .56);
+    }
+
+    .actionButton.offersMain {
+      background:
+        radial-gradient(circle at 90% 12%, rgba(255, 238, 0, .28), transparent 7rem),
+        linear-gradient(135deg, #0031d7 0%, #001bb0 54%, #000d54 100%);
+      border-color: rgba(255, 238, 0, .58);
+    }
+
+    .actionButton.instagramMain {
+      background:
+        radial-gradient(circle at 88% 12%, rgba(255, 238, 0, .18), transparent 7rem),
+        linear-gradient(135deg, #405de6 0%, #833ab4 36%, #e1306c 70%, #f77737 100%);
+      border-color: rgba(255, 255, 255, .38);
+    }
+
+    .actionButton.locationMain {
+      background:
+        radial-gradient(circle at 90% 12%, rgba(255, 238, 0, .18), transparent 7rem),
+        linear-gradient(135deg, #00aeea 0%, #0064c7 52%, #001863 100%);
+      border-color: rgba(169, 239, 255, .52);
+    }
+
+    .iconWrap {
+      position: relative;
+      z-index: 1;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      color: inherit;
+      background: rgba(255, 255, 255, .95);
+      border: 1px solid rgba(255, 255, 255, .2);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .36),
+        0 9px 16px rgba(0, 7, 34, .2);
+    }
+
+    .actionButton.siteMain .iconWrap {
+      color: #ffef00;
+      background: #001145;
+    }
+
+    .actionButton.whatsappMain .iconWrap {
+      color: #ffffff;
+      background: #25d366;
+    }
+
+    .actionButton.offersMain .iconWrap {
+      color: #001145;
+      background: #ffef00;
+    }
+
+    .actionButton.instagramMain .iconWrap {
+      color: #ffffff;
+      background:
+        radial-gradient(circle at 30% 105%, #fdf497 0 16%, #fd5949 42%, #d6249f 68%, #285aeb 100%);
+    }
+
+    .actionButton.locationMain .iconWrap {
+      color: #0047b9;
+      background: #ffffff;
+    }
+
+    .actionCopy {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+      text-align: left;
+      overflow: hidden;
+    }
+
+    .actionCopy strong {
+      color: inherit;
+      font-size: 16.5px;
+      line-height: 1.12;
+      font-weight: 900;
+      text-shadow: 0 2px 8px rgba(0, 7, 34, .42);
+    }
+
+    .actionCopy span {
+      color: rgba(255, 255, 255, .96);
+      font-size: 12.4px;
+      line-height: 1.32;
+      font-weight: 800;
+      text-shadow: 0 2px 8px rgba(0, 7, 34, .42);
+      overflow-wrap: anywhere;
+    }
+
+    .actionButton.siteMain .actionCopy strong,
+    .actionButton.siteMain .actionCopy span {
+      color: #001145;
+      text-shadow: none;
+    }
+
+    .signature {
+      margin-top: 15px;
+      color: rgba(255, 255, 255, .68);
+      font-size: 10.5px;
+      line-height: 1.4;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .actionButton:hover,
+      .quickButton:hover {
+        transform: translateY(-2px);
+      }
+    }
+
+    @media (min-width: 720px) {
+      .shell::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background:
+          linear-gradient(90deg, rgba(0, 7, 34, .58), transparent 26%, transparent 74%, rgba(0, 7, 34, .58)),
+          radial-gradient(circle at 50% 18%, rgba(255, 238, 0, .14), transparent 24rem);
+        pointer-events: none;
+      }
+
+      .brand {
+        left: calc(50% - min(240px, 46vw));
+        top: 28px;
+      }
+
+      .soundButton {
+        right: calc(50% - min(240px, 46vw));
+        top: 30px;
+      }
+
+      .panel {
+        left: 50%;
+        right: auto;
+        width: min(520px, calc(100% - 36px));
+        transform: translate(-50%, 100%);
+      }
+
+      .panel.open {
+        transform: translate(-50%, 0);
+      }
+
+      .videoLayer {
+        left: 50%;
+        width: min(520px, 100%);
+        transform: translateX(-50%);
+        box-shadow: 0 0 80px rgba(0, 7, 34, .42);
+      }
+    }
+
+    @media (max-width: 360px) {
+      .panelBody {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .actionButton {
+        gap: 12px;
+        padding-left: 13px;
+        padding-right: 13px;
+      }
+
+      .iconWrap {
+        width: 39px;
+        height: 39px;
+        flex-basis: 39px;
+      }
+
+      .actionCopy strong {
+        font-size: 15.5px;
+      }
+
+      .actionCopy span {
+        font-size: 11.8px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+
+      .panel {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="videoLayer" aria-hidden="true">
+      <video id="bgVideo" autoplay muted loop playsinline preload="auto">
+        <source src="./tvctravel_.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <header class="brand" aria-label="TVC Travel">
+      <img class="brandLogo" src="./logo%20tvc%20travel.png" alt="Logo da TVC Travel">
+      <p class="brandKicker">Viagens, pacotes e sonhos bem planejados</p>
+    </header>
+
+    <button class="soundButton" id="soundButton" type="button" aria-label="Ativar som">
+      <svg id="soundIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="22" y1="9" x2="16" y2="15"></line>
+        <line x1="16" y1="9" x2="22" y2="15"></line>
+      </svg>
+    </button>
+
+    <button class="swipeHint" id="swipeHint" type="button" aria-label="Abrir links da TVC Travel">
+      <div class="swipeCircle" aria-hidden="true">
+        <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+      </div>
+      <span>Arraste para cima</span>
+    </button>
+
+    <section class="panel" id="panel" aria-label="Links da TVC Travel">
+      <div class="handle" id="handle"></div>
+      <div class="panelBody">
+        <div class="panelHero">
+          <img class="panelLogo" src="./logo%20tvc%20travel.png" alt="TVC Travel">
+          <h1 class="title">Vamos planejar sua próxima viagem?</h1>
+          <p class="tagline">Passagens, pacotes, hospedagens e atendimento personalizado para você viver <strong>o destino que sempre imaginou</strong></p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="quickActions" aria-label="Ações rápidas">
+          <a class="quickButton site" href="https://www.tvctravel.com.br" target="_blank" rel="noopener" aria-label="Abrir site da TVC Travel">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M2 12h20"></path>
+              <path d="M12 2c2.5 2.8 4 6.2 4 10s-1.5 7.2-4 10c-2.5-2.8-4-6.2-4-10s1.5-7.2 4-10z"></path>
+            </svg>
+          </a>
+          <a class="quickButton whatsapp" href="https://wa.me/5584988041213" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97c-.27-.1-.47-.15-.67.15c-.2.3-.77.97-.94 1.16c-.17.2-.35.22-.64.08c-.3-.15-1.26-.46-2.39-1.48c-.88-.79-1.48-1.76-1.65-2.06c-.17-.3-.02-.46.13-.61c.13-.13.3-.35.45-.52c.15-.17.2-.3.3-.5c.1-.2.05-.37-.03-.52c-.07-.15-.67-1.61-.92-2.21c-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37c-.27.3-1.04 1.02-1.04 2.48c0 1.46 1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49c.71.31 1.26.49 1.69.63c.71.23 1.36.2 1.87.12c.57-.09 1.76-.72 2.01-1.41c.25-.69.25-1.29.17-1.41c-.07-.12-.27-.2-.57-.35"></path>
+            </svg>
+          </a>
+          <a class="quickButton instagram" href="https://www.instagram.com/tvctravel_/" target="_blank" rel="noopener" aria-label="Abrir Instagram da TVC Travel">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <circle cx="12" cy="12" r="4"></circle>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+            </svg>
+          </a>
+        </div>
+
+        <div class="actions">
+          <a class="actionButton siteMain" href="https://www.tvctravel.com.br" target="_blank" rel="noopener">
+            <span class="iconWrap" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M2 12h20"></path>
+                <path d="M12 2c2.5 2.8 4 6.2 4 10s-1.5 7.2-4 10c-2.5-2.8-4-6.2-4-10s1.5-7.2 4-10z"></path>
+              </svg>
+            </span>
+            <span class="actionCopy">
+              <strong>Nosso site</strong>
+              <span>Conheça a TVC Travel e planeje sua viagem</span>
+            </span>
+          </a>
+
+          <a class="actionButton whatsappMain" href="https://wa.me/5584988041213" target="_blank" rel="noopener">
+            <span class="iconWrap" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97c-.27-.1-.47-.15-.67.15c-.2.3-.77.97-.94 1.16c-.17.2-.35.22-.64.08c-.3-.15-1.26-.46-2.39-1.48c-.88-.79-1.48-1.76-1.65-2.06c-.17-.3-.02-.46.13-.61c.13-.13.3-.35.45-.52c.15-.17.2-.3.3-.5c.1-.2.05-.37-.03-.52c-.07-.15-.67-1.61-.92-2.21c-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37c-.27.3-1.04 1.02-1.04 2.48c0 1.46 1.07 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49c.71.31 1.26.49 1.69.63c.71.23 1.36.2 1.87.12c.57-.09 1.76-.72 2.01-1.41c.25-.69.25-1.29.17-1.41c-.07-.12-.27-.2-.57-.35"></path>
+              </svg>
+            </span>
+            <span class="actionCopy">
+              <strong>WhatsApp Oficial</strong>
+              <span>Fale com a equipe e receba atendimento direto</span>
+            </span>
+          </a>
+
+          <a class="actionButton offersMain" href="https://chat.whatsapp.com/FzSz8wiA0UdK1vgw4y42fh" target="_blank" rel="noopener">
+            <span class="iconWrap" aria-hidden="true">
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2.5 19.5 21 12 2.5 4.5 6 12l-3.5 7.5z"></path>
+                <path d="M6 12h7"></path>
+              </svg>
+            </span>
+            <span class="actionCopy">
+              <strong>Conheça nossas ofertas</strong>
+              <span>Entre no grupo e acompanhe oportunidades de viagem</span>
+            </span>
+          </a>
+
+          <a class="actionButton instagramMain" href="https://www.instagram.com/tvctravel_/" target="_blank" rel="noopener">
+            <span class="iconWrap" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <circle cx="12" cy="12" r="4"></circle>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"></circle>
+              </svg>
+            </span>
+            <span class="actionCopy">
+              <strong>Instagram</strong>
+              <span>Acompanhe novidades, dicas e inspirações de viagem</span>
+            </span>
+          </a>
+
+          <a class="actionButton locationMain" href="https://maps.app.goo.gl/H9e87nUrfo7oYnyR7" target="_blank" rel="noopener">
+            <span class="iconWrap" aria-hidden="true">
+              <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 4.9-5.4 10.1-7.3 11.7a1.1 1.1 0 0 1-1.4 0C9.4 20.1 4 14.9 4 10a8 8 0 1 1 16 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </span>
+            <span class="actionCopy">
+              <strong>Localização</strong>
+              <span>Abra o endereço da TVC Travel no Google Maps</span>
+            </span>
+          </a>
+        </div>
+
+        <p class="signature">Feito com HazeLink para TVC Travel</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const panel = document.getElementById("panel");
+    const hint = document.getElementById("swipeHint");
+    const handle = document.getElementById("handle");
+    const video = document.getElementById("bgVideo");
+    const soundButton = document.getElementById("soundButton");
+    const soundIcon = document.getElementById("soundIcon");
+
+    let startY = 0;
+    let lastY = 0;
+    let dragging = false;
+    let isOpen = false;
+    let soundEnabled = false;
+
+    const soundOffSvg = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="22" y1="9" x2="16" y2="15"></line><line x1="16" y1="9" x2="22" y2="15"></line>';
+    const soundOnSvg = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M16 9.5c.8.7 1.2 1.5 1.2 2.5s-.4 1.8-1.2 2.5"></path><path d="M19 7c1.5 1.4 2.3 3.1 2.3 5s-.8 3.6-2.3 5"></path>';
+
+    function setSoundState(enabled) {
+      soundEnabled = enabled;
+      video.muted = !enabled;
+      soundButton.classList.toggle("soundOn", enabled);
+      soundButton.setAttribute("aria-label", enabled ? "Desativar som" : "Ativar som");
+      soundIcon.innerHTML = enabled ? soundOnSvg : soundOffSvg;
+    }
+
+    async function playVideo() {
+      try {
+        await video.play();
+      } catch (error) {
+        video.muted = true;
+        setSoundState(false);
+        try {
+          await video.play();
+        } catch (silentError) {}
+      }
+    }
+
+    async function enableSound() {
+      setSoundState(true);
+      await playVideo();
+    }
+
+    function panelTransform(value) {
+      return window.innerWidth >= 720 ? `translate(-50%, ${value})` : `translateY(${value})`;
+    }
+
+    function openPanel() {
+      isOpen = true;
+      panel.classList.remove("noAnim");
+      panel.classList.add("open");
+      panel.style.transform = "";
+      hint.classList.add("hidden");
+    }
+
+    function closePanel() {
+      isOpen = false;
+      panel.classList.remove("noAnim");
+      panel.classList.remove("open");
+      panel.style.transform = "";
+      hint.classList.remove("hidden");
+    }
+
+    function snapBack() {
+      panel.classList.remove("noAnim");
+      panel.style.transform = "";
+      panel.classList.toggle("open", isOpen);
+    }
+
+    function onStart(y, target) {
+      if (target && target.closest("a, button")) return;
+      if (isOpen && target && target.closest("#panel") && !target.closest("#handle")) return;
+      startY = y;
+      lastY = y;
+      dragging = true;
+      if (!soundEnabled) enableSound();
+    }
+
+    function onMove(y) {
+      if (!dragging) return;
+      lastY = y;
+      const diff = startY - lastY;
+      panel.classList.add("noAnim");
+
+      if (!isOpen && diff > 5) {
+        const progress = Math.min(diff / 230, 1);
+        const base = `${(1 - progress) * 100}%`;
+        panel.style.transform = panelTransform(base);
+      }
+
+      if (isOpen && diff < -5) {
+        const down = `${Math.max(0, -diff)}px`;
+        panel.style.transform = panelTransform(down);
+      }
+    }
+
+    function onEnd() {
+      if (!dragging) return;
+      dragging = false;
+      const diff = startY - lastY;
+
+      if (!isOpen && diff > 68) openPanel();
+      else if (isOpen && diff < -68) closePanel();
+      else snapBack();
+    }
+
+    setSoundState(false);
+    video.muted = true;
+    playVideo();
+
+    soundButton.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setSoundState(!soundEnabled);
+      await playVideo();
+    });
+
+    soundButton.addEventListener("touchstart", (event) => event.stopPropagation(), { passive: true });
+    soundButton.addEventListener("mousedown", (event) => event.stopPropagation());
+    hint.addEventListener("click", openPanel);
+    hint.addEventListener("touchstart", (event) => event.stopPropagation(), { passive: true });
+    hint.addEventListener("mousedown", (event) => event.stopPropagation());
+    handle.addEventListener("click", () => isOpen ? closePanel() : openPanel());
+
+    document.addEventListener("touchstart", (event) => onStart(event.touches[0].clientY, event.target), { passive: true });
+    document.addEventListener("touchmove", (event) => {
+      if (dragging) event.preventDefault();
+      onMove(event.touches[0].clientY);
+    }, { passive: false });
+    document.addEventListener("touchend", onEnd);
+    document.addEventListener("mousedown", (event) => onStart(event.clientY, event.target));
+    document.addEventListener("mousemove", (event) => {
+      if (dragging) onMove(event.clientY);
+    });
+    document.addEventListener("mouseup", onEnd);
+    document.addEventListener("mouseleave", onEnd);
+  </script>
+</body>
+</html>
