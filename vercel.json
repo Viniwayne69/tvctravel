@@ -19,7 +19,7 @@
       ]
     },
     {
-      "source": "/tvc-travel-preview.jpg",
+      "source": "/logo-tvc-travel.png",
       "headers": [
         {
           "key": "Cache-Control",
@@ -27,7 +27,7 @@
         },
         {
           "key": "Content-Type",
-          "value": "image/jpeg"
+          "value": "image/png"
         }
       ]
     }
