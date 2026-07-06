@@ -628,8 +628,9 @@
   <main class="shell">
     <div class="videoLayer" aria-hidden="true">
       <video id="bgVideo" autoplay muted loop playsinline webkit-playsinline preload="auto">
-        <source src="./tvctravel-autoplay.mp4" type="video/mp4">
+        <source src="./tvctravel-bg.mp4" type="video/mp4">
       </video>
+      <audio id="bgAudio" src="./tvctravel-audio.m4a" loop preload="auto"></audio>
     </div>
 
     <header class="brand" aria-label="TVC Travel">
@@ -764,6 +765,7 @@
     const hint = document.getElementById("swipeHint");
     const handle = document.getElementById("handle");
     const video = document.getElementById("bgVideo");
+    const audio = document.getElementById("bgAudio");
     const soundButton = document.getElementById("soundButton");
     const soundIcon = document.getElementById("soundIcon");
 
@@ -778,21 +780,19 @@
 
     function setSoundState(enabled) {
       soundEnabled = enabled;
-      video.muted = !enabled;
+      audio.muted = !enabled;
       soundButton.classList.toggle("soundOn", enabled);
       soundButton.setAttribute("aria-label", enabled ? "Desativar som" : "Ativar som");
       soundIcon.innerHTML = enabled ? soundOnSvg : soundOffSvg;
     }
 
-    async function playMutedVideo() {
+    async function playBackgroundVideo() {
       video.autoplay = true;
       video.playsInline = true;
       video.defaultMuted = true;
       video.muted = true;
-      video.volume = 1;
       try {
         await video.play();
-        setSoundState(false);
         return true;
       } catch (error) {
         return false;
@@ -802,15 +802,16 @@
     async function enableSound() {
       video.autoplay = true;
       video.playsInline = true;
-      video.defaultMuted = false;
-      video.muted = false;
-      video.volume = 1;
+      await playBackgroundVideo();
+      audio.currentTime = video.currentTime % Math.max(audio.duration || 27.7, 1);
+      audio.muted = false;
+      audio.volume = 1;
       setSoundState(true);
       try {
-        await video.play();
+        await audio.play();
         return true;
       } catch (error) {
-        await playMutedVideo();
+        setSoundState(false);
         return false;
       }
     }
@@ -883,19 +884,26 @@
       else snapBack();
     }
 
-    playMutedVideo();
-    video.addEventListener("loadedmetadata", playMutedVideo, { once: true });
-    video.addEventListener("canplay", playMutedVideo, { once: true });
-    window.addEventListener("pageshow", playMutedVideo);
+    playBackgroundVideo();
+    video.addEventListener("loadedmetadata", playBackgroundVideo, { once: true });
+    video.addEventListener("loadeddata", playBackgroundVideo, { once: true });
+    video.addEventListener("canplay", playBackgroundVideo, { once: true });
+    window.addEventListener("pageshow", playBackgroundVideo);
     document.addEventListener("visibilitychange", () => {
-      if (!document.hidden && video.paused) playMutedVideo();
+      if (!document.hidden) playBackgroundVideo();
     });
+    const autoplayGuard = window.setInterval(() => {
+      if (video.paused) playBackgroundVideo();
+      if (video.currentTime > 5) window.clearInterval(autoplayGuard);
+    }, 300);
 
     soundButton.addEventListener("click", async (event) => {
       event.preventDefault();
       event.stopPropagation();
       if (soundEnabled) {
-        await playMutedVideo();
+        audio.pause();
+        setSoundState(false);
+        await playBackgroundVideo();
       } else {
         await enableSound();
       }
