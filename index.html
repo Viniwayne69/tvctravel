@@ -625,7 +625,7 @@
 <body>
   <main class="shell">
     <div class="videoLayer" aria-hidden="true">
-      <video id="bgVideo" autoplay muted loop playsinline preload="auto">
+      <video id="bgVideo" autoplay loop playsinline preload="auto">
         <source src="./tvctravel_.mp4" type="video/mp4">
       </video>
     </div>
@@ -799,6 +799,11 @@
       await playVideo();
     }
 
+    async function openPanelWithSound() {
+      if (!soundEnabled) await enableSound();
+      openPanel();
+    }
+
     function panelTransform(value) {
       return window.innerWidth >= 720 ? `translate(-50%, ${value})` : `translateY(${value})`;
     }
@@ -826,7 +831,7 @@
     }
 
     function onStart(y, target) {
-      if (target && target.closest("a, button")) return;
+      if (target && target.closest("a, button") && !target.closest("#swipeHint")) return;
       if (isOpen && target && target.closest("#panel") && !target.closest("#handle")) return;
       startY = y;
       lastY = y;
@@ -862,8 +867,8 @@
       else snapBack();
     }
 
-    setSoundState(false);
-    video.muted = true;
+    setSoundState(true);
+    video.muted = false;
     playVideo();
 
     soundButton.addEventListener("click", async (event) => {
@@ -875,9 +880,7 @@
 
     soundButton.addEventListener("touchstart", (event) => event.stopPropagation(), { passive: true });
     soundButton.addEventListener("mousedown", (event) => event.stopPropagation());
-    hint.addEventListener("click", openPanel);
-    hint.addEventListener("touchstart", (event) => event.stopPropagation(), { passive: true });
-    hint.addEventListener("mousedown", (event) => event.stopPropagation());
+    hint.addEventListener("click", openPanelWithSound);
     handle.addEventListener("click", () => isOpen ? closePanel() : openPanel());
 
     document.addEventListener("touchstart", (event) => onStart(event.touches[0].clientY, event.target), { passive: true });
