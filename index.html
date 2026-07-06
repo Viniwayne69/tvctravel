@@ -782,16 +782,35 @@
       soundIcon.innerHTML = enabled ? soundOnSvg : soundOffSvg;
     }
 
-    async function playVideo() {
+    async function playVideo(options = {}) {
+      const allowMutedFallback = options.allowMutedFallback !== false;
+      video.defaultMuted = false;
+      video.volume = 1;
       try {
         await video.play();
+        setSoundState(!video.muted);
+        return true;
       } catch (error) {
+        if (!allowMutedFallback) return false;
         video.muted = true;
         setSoundState(false);
         try {
           await video.play();
         } catch (silentError) {}
+        return false;
       }
+    }
+
+    async function startWithSound() {
+      video.autoplay = true;
+      video.playsInline = true;
+      video.defaultMuted = false;
+      video.muted = false;
+      video.volume = 1;
+      setSoundState(true);
+      await playVideo({ allowMutedFallback: false });
+      setTimeout(() => playVideo({ allowMutedFallback: false }), 250);
+      setTimeout(() => playVideo({ allowMutedFallback: true }), 1500);
     }
 
     async function enableSound() {
@@ -867,9 +886,11 @@
       else snapBack();
     }
 
-    setSoundState(true);
-    video.muted = false;
-    playVideo();
+    startWithSound();
+    window.addEventListener("pageshow", startWithSound);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) startWithSound();
+    });
 
     soundButton.addEventListener("click", async (event) => {
       event.preventDefault();
